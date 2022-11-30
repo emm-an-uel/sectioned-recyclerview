@@ -13,9 +13,9 @@ class Adapter (
         val layoutInflater = LayoutInflater.from(parent.context)
         return when (viewType) {
             ListItem.TYPE_DATE ->
-                DateViewHolder(DateItemBinding.inflate(layoutInflater, parent, true))
+                DateViewHolder(DateItemBinding.inflate(layoutInflater, parent, false))
             else ->
-                GeneralViewHolder(GeneralItemBinding.inflate(layoutInflater, parent, true))
+                GeneralViewHolder(GeneralItemBinding.inflate(layoutInflater, parent, false))
         }
     }
 
