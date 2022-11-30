@@ -1,6 +1,5 @@
 package com.example.sectionedrecyclerview
 
-import android.app.LauncherActivity
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -17,27 +16,27 @@ class MainActivity : AppCompatActivity() {
         list = findViewById(R.id.list)
 
         val myOptions = listOf(
-            PojoOfJsonArray("name 1", "2016-06-21"),
-            PojoOfJsonArray("name 2", "2016-06-05"),
-            PojoOfJsonArray("name 2", "2016-06-05"),
-            PojoOfJsonArray("name 3", "2016-05-17"),
-            PojoOfJsonArray("name 3", "2016-05-17"),
-            PojoOfJsonArray("name 3", "2016-05-17"),
-            PojoOfJsonArray("name 3", "2016-05-17"),
-            PojoOfJsonArray("name 2", "2016-06-05"),
-            PojoOfJsonArray("name 3", "2016-05-17")
-        )
+            PojoOfJsonArray("name 1", "20170621"),
+            PojoOfJsonArray("name 2", "20160605"),
+            PojoOfJsonArray("name 3", "20160605"),
+            PojoOfJsonArray("name 3", "20150517"),
+            PojoOfJsonArray("name 3", "20150517"),
+            PojoOfJsonArray("name 3", "20160517"),
+            PojoOfJsonArray("name 3", "20160517"),
+            PojoOfJsonArray("name 2", "20130605"),
+            PojoOfJsonArray("name 3", "20160517")
+        ).sortedBy { it.date }
 
-        val groupedMapMap: Map<String, List<PojoOfJsonArray>> = myOptions.groupBy {
+        val groupedMap: Map<String, List<PojoOfJsonArray>> = myOptions.groupBy {
             it.date
-        }
+        } // creates a map of 'date' to a 'list of PojoOfJsonArray' - eg: key '20160605', value is a list containing 'name 2', 'name 3'
 
         val consolidatedList = mutableListOf<ListItem>()
-        for (date:String in groupedMapMap.keys) {
-            consolidatedList.add(DateItem(date))
-            val groupItems: List<PojoOfJsonArray>? = groupedMapMap[date]
+        for (date:String in groupedMap.keys) {
+            consolidatedList.add(DateItem(date)) // creates a DateItem class for each 'date' in groupedMap
+            val groupItems: List<PojoOfJsonArray>? = groupedMap[date] // groupItems is a list of PojoOfJsonArray which corresponds to the above 'date'
             groupItems?.forEach {
-                consolidatedList.add(GeneralItem(it.name))
+                consolidatedList.add(GeneralItem(it.name)) // creates a GeneralItem class for each 'name' in above list 
             }
         }
 
