@@ -36,7 +36,7 @@ class MainActivity : AppCompatActivity() {
             consolidatedList.add(DateItem(date)) // creates a DateItem class for each 'date' in groupedMap
             val groupItems: List<PojoOfJsonArray>? = groupedMap[date] // groupItems is a list of PojoOfJsonArray which corresponds to the above 'date'
             groupItems?.forEach {
-                consolidatedList.add(GeneralItem(it.name)) // creates a GeneralItem class for each 'name' in above list 
+                consolidatedList.add(GeneralItem(it.name)) // creates a GeneralItem class for each 'name' in above list
             }
         }
 
