@@ -3,6 +3,8 @@ package com.example.sectionedrecyclerview
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.sectionedrecyclerview.databinding.DateItemBinding
+import com.example.sectionedrecyclerview.databinding.GeneralItemBinding
 
 class Adapter (
     private val items: List<ListItem>
