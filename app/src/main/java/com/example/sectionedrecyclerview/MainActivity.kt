@@ -74,11 +74,29 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val pos = viewHolder.adapterPosition
                 consolidatedList.removeAt(viewHolder.adapterPosition)
                 adapter.notifyItemRemoved(viewHolder.adapterPosition)
+                checkForDoubleDate(pos)
             }
 
         }).attachToRecyclerView(rv)
     }
 
+    private fun checkForDoubleDate(removedIndex: Int) {
+        if (removedIndex < consolidatedList.size) {
+            if (consolidatedList[removedIndex].type == ListItem.TYPE_DATE) {
+                if (consolidatedList[removedIndex-1].type == ListItem.TYPE_DATE) {
+                    // if both a) the item which has replaced the one just removed, and b) the previous item are TYPE_DATE
+                    consolidatedList.removeAt(removedIndex-1) // remove the double date
+                    adapter.notifyItemRemoved(removedIndex-1)
+                }
+            }
+        } else { // if the item removed was the last item in the list
+            if (consolidatedList[removedIndex-1].type == ListItem.TYPE_DATE) {
+                consolidatedList.removeAt(removedIndex-1)
+                adapter.notifyItemRemoved(removedIndex-1)
+            }
+        }
+    }
 }
