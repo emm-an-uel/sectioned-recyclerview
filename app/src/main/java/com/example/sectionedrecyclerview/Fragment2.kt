@@ -88,13 +88,41 @@ class Fragment2 : Fragment() {
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val pos = viewHolder.adapterPosition
-                // TODO: add map functionality to fragment2 
+                val item = consolidatedList2[pos]
                 consolidatedList2.removeAt(viewHolder.adapterPosition)
+                val actualIndex = mapOfIndex[pos]!!
+                list2.removeAt(actualIndex)
                 adapter.notifyItemRemoved(viewHolder.adapterPosition)
+                updateMap(pos, true)
+
                 checkForDoubleDate(pos)
             }
 
         }).attachToRecyclerView(rv)
+    }
+
+    private fun updateMap(pos: Int, indexChanged: Boolean) {
+        mapOfIndex.remove(pos) // remove the key-value pair of the swiped item
+
+        // adjust following key-value pairs
+        if (indexChanged) { // GeneralItem got removed
+            for (p in pos+1 until consolidatedList2.size+1) {
+                if (mapOfIndex.containsKey(p)) { // if it doesn't contain, that means the item at p is a DateItem
+                    val oldValue = mapOfIndex[p]!!
+                    mapOfIndex.remove(p)
+                    mapOfIndex[p-1] = oldValue-1
+                }
+            }
+        } else { // DateItem got removed
+            for (p in pos+1 until consolidatedList2.size+1) {
+                if (mapOfIndex.containsKey(p)) {
+                    val value = mapOfIndex[p]!!
+                    mapOfIndex.remove(p)
+                    mapOfIndex[p-1] = value
+                }
+            }
+        }
+        populateLinearLayout()
     }
 
     private fun checkForDoubleDate(removedIndex: Int) {
@@ -104,12 +132,14 @@ class Fragment2 : Fragment() {
                     // if both a) the item which has replaced the one just removed, and b) the previous item are TYPE_DATE
                     consolidatedList2.removeAt(removedIndex-1) // remove the double date
                     adapter.notifyItemRemoved(removedIndex-1)
+                    updateMap(removedIndex-1, false)
                 }
             }
         } else { // if the item removed was the last item in the list
             if (consolidatedList2[removedIndex-1].type == ListItem.TYPE_DATE) {
                 consolidatedList2.removeAt(removedIndex-1)
                 adapter.notifyItemRemoved(removedIndex-1)
+                updateMap(removedIndex-1, false)
             }
         }
     }
