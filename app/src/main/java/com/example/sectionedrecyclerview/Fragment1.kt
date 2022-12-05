@@ -23,6 +23,7 @@ class Fragment1 : Fragment() {
     lateinit var mapOfIndex: MutableMap<Int, Int>
 
     lateinit var linearLayoutIndex: LinearLayout
+    lateinit var linearLayoutList: LinearLayout
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,9 +37,11 @@ class Fragment1 : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // setup linearLayoutIndex
+        // setup debugging linearLayouts
         linearLayoutIndex = view.findViewById(R.id.linearLayoutIndex)
+        linearLayoutList = view.findViewById(R.id.linearLayoutList)
 
+        // get data lists and map of <position, actualIndex>
         list1 = viewModel.getList1()
         consolidatedList1 = viewModel.getConsolidatedList1() // get list from viewModel
         createMapOfIndex()
@@ -50,7 +53,7 @@ class Fragment1 : Fragment() {
         swipeFunctions()
     }
 
-    private fun populateLinearLayout() {
+    private fun populateLinearLayoutIndex() {
         linearLayoutIndex.removeAllViews()
         for (p in mapOfIndex.keys) {
             val i = mapOfIndex[p]
@@ -69,7 +72,18 @@ class Fragment1 : Fragment() {
                 index++
             }
         }
-        populateLinearLayout()
+        populateLinearLayoutIndex()
+        populateLinearLayoutList()
+    }
+
+    private fun populateLinearLayoutList() {
+        linearLayoutList.removeAllViews()
+        for (item in list1) {
+            val name = item.name
+            val tv = TextView(context)
+            tv.text = name
+            linearLayoutList.addView(tv)
+        }
     }
 
     private fun swipeFunctions() {
@@ -124,7 +138,8 @@ class Fragment1 : Fragment() {
                 }
             }
         }
-        populateLinearLayout()
+        populateLinearLayoutIndex()
+        populateLinearLayoutList()
     }
 
     private fun checkForDoubleDate(removedIndex: Int) {
