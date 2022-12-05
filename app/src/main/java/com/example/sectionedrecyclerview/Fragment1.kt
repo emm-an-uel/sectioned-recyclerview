@@ -89,9 +89,10 @@ class Fragment1 : Fragment() {
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val pos = viewHolder.adapterPosition
-                val item = consolidatedList1[pos]
                 consolidatedList1.removeAt(viewHolder.adapterPosition)
                 val actualIndex = mapOfIndex[pos]!!
+                val item: PojoOfJsonArray = list1[actualIndex]
+                viewModel.updateList2(item) // adds this item to list2
                 list1.removeAt(actualIndex)
                 adapter.notifyItemRemoved(viewHolder.adapterPosition)
                 updateMap(pos, true)

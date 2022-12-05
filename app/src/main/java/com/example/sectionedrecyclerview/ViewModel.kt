@@ -43,6 +43,10 @@ class ViewModel: ViewModel() {
             }
         }
 
+        createConsolidatedLists()
+    }
+
+    private fun createConsolidatedLists() {
         list1.sortBy { it.date }
         list2.sortBy { it.date }
 
@@ -84,5 +88,28 @@ class ViewModel: ViewModel() {
 
     fun getList2(): ArrayList<PojoOfJsonArray> {
         return list2
+    }
+
+    fun updateList1(item: PojoOfJsonArray) { // this method is called when an item is swiped from list2 to list1
+        item.num = 1
+        list1.add(item)
+        saveLists()
+        createConsolidatedLists()
+    }
+
+    fun updateList2(item: PojoOfJsonArray) {
+        item.num = 2
+        list2.add(item)
+        saveLists()
+        createConsolidatedLists()
+    }
+
+    private fun saveLists() {
+        list.apply {
+            clear()
+            addAll(list1)
+            addAll(list2)
+        }
+        // in an actual app, this would then be saved in a json file
     }
 }
