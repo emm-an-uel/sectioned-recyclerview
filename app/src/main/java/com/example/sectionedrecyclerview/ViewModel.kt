@@ -70,11 +70,19 @@ class ViewModel: ViewModel() {
         }
     }
 
-    fun getList1(): ArrayList<ListItem> {
+    fun getConsolidatedList1(): ArrayList<ListItem> {
         return consolidatedList1
     }
 
-    fun getList2(): ArrayList<ListItem> {
+    fun getConsolidatedList2(): ArrayList<ListItem> {
         return consolidatedList2
+    }
+
+    fun getList1(): ArrayList<PojoOfJsonArray> {
+        return list1
+    }
+
+    fun getList2(): ArrayList<PojoOfJsonArray> {
+        return list2
     }
 }

@@ -5,6 +5,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -16,6 +18,10 @@ class Fragment2 : Fragment() {
     lateinit var viewModel: ViewModel
 
     lateinit var consolidatedList2: ArrayList<ListItem>
+    lateinit var list2: ArrayList<PojoOfJsonArray>
+    lateinit var mapOfIndex: MutableMap<Int, Int>
+
+    lateinit var linearLayoutIndex: LinearLayout
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -29,13 +35,40 @@ class Fragment2 : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        consolidatedList2 = viewModel.getList2() // get list from viewModel
+        // setup linearLayoutIndex
+        linearLayoutIndex = view.findViewById(R.id.linearLayoutIndex)
+
+        list2 = viewModel.getList2()
+        consolidatedList2 = viewModel.getConsolidatedList2() // get list from viewModel
+        createMapOfIndex()
 
         // setup recyclerview
         adapter = Adapter(consolidatedList2)
         rv = view.findViewById(R.id.rv)
         rv.adapter = adapter
         swipeFunctions()
+    }
+
+    private fun createMapOfIndex() {
+        mapOfIndex = mutableMapOf()
+        var index = 0
+        for (n in 0 until consolidatedList2.size) {
+            if (consolidatedList2[n].type == ListItem.TYPE_GENERAL) {
+                mapOfIndex[n] = index
+                index++
+            }
+        }
+        populateLinearLayout()
+    }
+
+    private fun populateLinearLayout() {
+        linearLayoutIndex.removeAllViews()
+        for (p in mapOfIndex.keys) {
+            val i = mapOfIndex[p]
+            val textView = TextView(context)
+            textView.text = "$p - $i"
+            linearLayoutIndex.addView(textView)
+        }
     }
 
     private fun swipeFunctions() {
@@ -55,6 +88,7 @@ class Fragment2 : Fragment() {
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val pos = viewHolder.adapterPosition
+                // TODO: add map functionality to fragment2 
                 consolidatedList2.removeAt(viewHolder.adapterPosition)
                 adapter.notifyItemRemoved(viewHolder.adapterPosition)
                 checkForDoubleDate(pos)

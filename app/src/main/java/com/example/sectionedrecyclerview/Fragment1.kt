@@ -5,9 +5,12 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.android.synthetic.main.fragment_1.*
 
 class Fragment1 : Fragment() {
     lateinit var rv: RecyclerView
@@ -16,6 +19,10 @@ class Fragment1 : Fragment() {
     lateinit var viewModel: ViewModel
 
     lateinit var consolidatedList1: ArrayList<ListItem>
+    lateinit var list1: ArrayList<PojoOfJsonArray>
+    lateinit var mapOfIndex: MutableMap<Int, Int>
+
+    lateinit var linearLayoutIndex: LinearLayout
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -29,13 +36,40 @@ class Fragment1 : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        consolidatedList1 = viewModel.getList1() // get list from viewModel
+        // setup linearLayoutIndex
+        linearLayoutIndex = view.findViewById(R.id.linearLayoutIndex)
+
+        list1 = viewModel.getList1()
+        consolidatedList1 = viewModel.getConsolidatedList1() // get list from viewModel
+        createMapOfIndex()
 
         // setup recyclerview
         adapter = Adapter(consolidatedList1)
         rv = view.findViewById(R.id.rv)
         rv.adapter = adapter
         swipeFunctions()
+    }
+
+    private fun populateLinearLayout() {
+        linearLayoutIndex.removeAllViews()
+        for (p in mapOfIndex.keys) {
+            val i = mapOfIndex[p]
+            val textView = TextView(context)
+            textView.text = "$p - $i"
+            linearLayoutIndex.addView(textView)
+        }
+    }
+
+    private fun createMapOfIndex() {
+        mapOfIndex = mutableMapOf()
+        var index = 0
+        for (n in 0 until consolidatedList1.size) {
+            if (consolidatedList1[n].type == ListItem.TYPE_GENERAL) {
+                mapOfIndex[n] = index
+                index++
+            }
+        }
+        populateLinearLayout()
     }
 
     private fun swipeFunctions() {
@@ -55,12 +89,41 @@ class Fragment1 : Fragment() {
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val pos = viewHolder.adapterPosition
+                val item = consolidatedList1[pos]
                 consolidatedList1.removeAt(viewHolder.adapterPosition)
+                val actualIndex = mapOfIndex[pos]!!
+                list1.removeAt(actualIndex)
                 adapter.notifyItemRemoved(viewHolder.adapterPosition)
+                updateMap(pos, true)
+
                 checkForDoubleDate(pos)
             }
 
         }).attachToRecyclerView(rv)
+    }
+
+    private fun updateMap(pos: Int, indexChanged: Boolean) {
+        mapOfIndex.remove(pos) // remove the key-value pair of the swiped item
+
+        // adjust following key-value pairs
+        if (indexChanged) { // GeneralItem got removed
+            for (p in pos+1 until consolidatedList1.size+1) {
+                if (mapOfIndex.containsKey(p)) { // if it doesn't contain, that means the item at p is a DateItem
+                    val oldValue = mapOfIndex[p]!!
+                    mapOfIndex.remove(p)
+                    mapOfIndex[p-1] = oldValue-1
+                }
+            }
+        } else { // DateItem got removed
+            for (p in pos+1 until consolidatedList1.size+1) {
+                if (mapOfIndex.containsKey(p)) {
+                    val value = mapOfIndex[p]!!
+                    mapOfIndex.remove(p)
+                    mapOfIndex[p-1] = value
+                }
+            }
+        }
+        populateLinearLayout()
     }
 
     private fun checkForDoubleDate(removedIndex: Int) {
@@ -70,12 +133,14 @@ class Fragment1 : Fragment() {
                     // if both a) the item which has replaced the one just removed, and b) the previous item are TYPE_DATE
                     consolidatedList1.removeAt(removedIndex-1) // remove the double date
                     adapter.notifyItemRemoved(removedIndex-1)
+                    updateMap(removedIndex-1, false)
                 }
             }
         } else { // if the item removed was the last item in the list
             if (consolidatedList1[removedIndex-1].type == ListItem.TYPE_DATE) {
                 consolidatedList1.removeAt(removedIndex-1)
                 adapter.notifyItemRemoved(removedIndex-1)
+                updateMap(removedIndex-1, false)
             }
         }
     }
