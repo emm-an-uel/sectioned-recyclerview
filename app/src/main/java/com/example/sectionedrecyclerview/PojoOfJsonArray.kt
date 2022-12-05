@@ -5,5 +5,6 @@ import java.util.*
 data class PojoOfJsonArray (
     val name: String,
     val date: Calendar,
-    val dateString: String
+    val dateString: String,
+    var num: Int
 )
