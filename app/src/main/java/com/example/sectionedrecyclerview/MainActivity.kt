@@ -33,14 +33,16 @@ class MainActivity : AppCompatActivity() {
         fragment1 = Fragment1()
         fragment2 = Fragment2()
 
+        supportFragmentManager.beginTransaction().replace(R.id.relativeLayout, fragment1).commit() // by default
+
         button = findViewById(R.id.button)
         button.text = "Current View: Fragment 1"
         button.setOnClickListener {
             currentFragment = if (currentFragment == 1) {
-                supportFragmentManager.beginTransaction().replace(R.id.relativeLayout, fragment2)
+                supportFragmentManager.beginTransaction().replace(R.id.relativeLayout, fragment2).commit()
                 2
             } else {
-                supportFragmentManager.beginTransaction().replace(R.id.relativeLayout, fragment1)
+                supportFragmentManager.beginTransaction().replace(R.id.relativeLayout, fragment1).commit()
                 1
             }
             button.text = "Current View: Fragment $currentFragment"
