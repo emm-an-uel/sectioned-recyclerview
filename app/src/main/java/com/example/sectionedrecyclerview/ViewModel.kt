@@ -25,14 +25,14 @@ class ViewModel: ViewModel() {
 
         list = arrayListOf()
         list.apply {
-            add(PojoOfJsonArray("name 1", c1, "20170323", 1))
-            add(PojoOfJsonArray("name 3", c1, "20170323", 1))
-            add(PojoOfJsonArray("name 3", c2, "20170327", 1))
-            add(PojoOfJsonArray("name 3", c2, "20170327", 1))
-            add(PojoOfJsonArray("name 3", c2, "20170327", 1))
-            add(PojoOfJsonArray("name 3", c1, "20170323", 2))
-            add(PojoOfJsonArray("name 2", c3, "20180402", 2))
-            add(PojoOfJsonArray("name 3", c2, "20170327", 2))
+            add(PojoOfJsonArray("name A", c1, "20170323", 1))
+            add(PojoOfJsonArray("name B", c1, "20170323", 1))
+            add(PojoOfJsonArray("name C", c2, "20170327", 1))
+            add(PojoOfJsonArray("name D", c2, "20170327", 1))
+            add(PojoOfJsonArray("name E", c2, "20170327", 1))
+            add(PojoOfJsonArray("name F", c1, "20170323", 2))
+            add(PojoOfJsonArray("name G", c3, "20180402", 2))
+            add(PojoOfJsonArray("name H", c2, "20170327", 2))
         }
 
         for (i in list) { // sort into list 1 or 2
