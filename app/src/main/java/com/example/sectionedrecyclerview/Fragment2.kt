@@ -105,8 +105,7 @@ class Fragment2 : Fragment() {
                 consolidatedList2.removeAt(viewHolder.adapterPosition)
                 val actualIndex = mapOfIndex[pos]!!
                 val item: PojoOfJsonArray = list2[actualIndex]
-                viewModel.updateList1(item)
-                list2.removeAt(actualIndex)
+                viewModel.updateList1(item, actualIndex)
                 adapter.notifyItemRemoved(viewHolder.adapterPosition)
                 updateMap(pos, true)
 

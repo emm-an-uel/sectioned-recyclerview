@@ -72,8 +72,8 @@ class Fragment1 : Fragment() {
                 index++
             }
         }
-        populateLinearLayoutIndex()
-        populateLinearLayoutList()
+        //populateLinearLayoutIndex()
+        //populateLinearLayoutList()
     }
 
     private fun populateLinearLayoutList() {
@@ -106,8 +106,7 @@ class Fragment1 : Fragment() {
                 consolidatedList1.removeAt(viewHolder.adapterPosition)
                 val actualIndex = mapOfIndex[pos]!!
                 val item: PojoOfJsonArray = list1[actualIndex]
-                viewModel.updateList2(item) // adds this item to list2
-                list1.removeAt(actualIndex)
+                viewModel.updateList2(item, actualIndex) // adds this item to list2
                 adapter.notifyItemRemoved(viewHolder.adapterPosition)
                 updateMap(pos, true)
 
@@ -138,8 +137,8 @@ class Fragment1 : Fragment() {
                 }
             }
         }
-        populateLinearLayoutIndex()
-        populateLinearLayoutList()
+        //populateLinearLayoutIndex()
+        //populateLinearLayoutList()
     }
 
     private fun checkForDoubleDate(removedIndex: Int) {

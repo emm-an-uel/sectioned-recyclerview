@@ -40,21 +40,26 @@ class Adapter (
 
     inner class DateViewHolder(val binding: DateItemBinding): RecyclerView.ViewHolder(binding.root) {
         fun bind(item: DateItem) {
-            // convert to format 'DD MM YYYY' 
-            val rawDate = item.date
-            val year = rawDate.take(4)
-            val monthDay = rawDate.takeLast(4)
-            val month = monthDay.take(2)
-            val day = monthDay.takeLast(2)
-
-            val actualDate = "$day $month $year"
-            binding.txtDate.text = actualDate
+            //val actualDate = convertDateFormat(item)
+            binding.txtDate.text = item.date
         }
     }
 
     inner class GeneralViewHolder(val binding: GeneralItemBinding): RecyclerView.ViewHolder(binding.root) {
         fun bind(item: GeneralItem) {
             binding.txtTitle.text = item.name
+            binding.tvDate.text = item.dateString
         }
+    }
+
+    private fun convertDateFormat(item: DateItem): String {
+        // convert to format 'DD MM YYYY'
+        val rawDate = item.date
+        val year = rawDate.take(4)
+        val monthDay = rawDate.takeLast(4)
+        val month = monthDay.take(2)
+        val day = monthDay.takeLast(2)
+
+        return "$day $month $year"
     }
 }
