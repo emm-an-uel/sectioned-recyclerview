@@ -56,6 +56,7 @@ class ViewModel: ViewModel() {
     }
 
     private fun createConsolidatedList1() {
+        // TODO: sectioning works only sometimes - changes when I re-run the app
         val today = Calendar.getInstance()
         val actualMonth = today.get(Calendar.MONTH)+1
         today.set(today.get(Calendar.YEAR), actualMonth, today.get(Calendar.DAY_OF_MONTH)) // note that 'today' was instantiated as "2022 11 6" since months go from 0 to 11. this fixes that
