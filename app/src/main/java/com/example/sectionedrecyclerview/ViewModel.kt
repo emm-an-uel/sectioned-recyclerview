@@ -56,7 +56,6 @@ class ViewModel: ViewModel() {
     }
 
     private fun createConsolidatedList1() {
-        // TODO: sectioning works only sometimes - changes when I re-run the app
         val today = Calendar.getInstance()
         val todayInt = dateToInt(today)
 
