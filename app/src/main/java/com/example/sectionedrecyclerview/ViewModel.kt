@@ -17,30 +17,30 @@ class ViewModel: ViewModel() {
         list2 = arrayListOf()
 
         val c1 = Calendar.getInstance()
-        c1.set(2022, 12, 6) // today
+        c1.set(2022, 11, 7) // today
         val c2 = Calendar.getInstance()
-        c2.set(2022, 12, 7) // tomorrow
+        c2.set(2022, 11, 8) // tomorrow
         val c3 = Calendar.getInstance()
-        c3.set(2022, 11, 15) // overdue
+        c3.set(2022, 10, 15) // overdue
         val c4 = Calendar.getInstance()
-        c4.set(2023, 12, 2) // others
+        c4.set(2023, 11, 3) // others
         val c5 = Calendar.getInstance()
-        c5.set(2022, 12, 12) // next week
+        c5.set(2022, 11, 13) // next week
 
         list = arrayListOf()
         list.apply {
-            add(PojoOfJsonArray("name A", c1, "20221206", 1))
-            add(PojoOfJsonArray("name B", c1, "20221206", 1))
-            add(PojoOfJsonArray("name C", c2, "20221207", 1))
-            add(PojoOfJsonArray("name D", c2, "20221207", 1))
-            add(PojoOfJsonArray("name E", c2, "20221207", 1))
-            add(PojoOfJsonArray("name F", c1, "20221206", 1))
-            add(PojoOfJsonArray("name G", c3, "20221115", 1))
-            add(PojoOfJsonArray("name H", c4, "20231202", 1))
-            add(PojoOfJsonArray("name I", c4, "20231202", 1))
-            add(PojoOfJsonArray("name J", c5, "20221212", 1))
-            add(PojoOfJsonArray("name K", c5, "20221212", 1))
-            add(PojoOfJsonArray("name L", c5, "20221212", 1))
+            add(PojoOfJsonArray("name A", c1, dateToString(c1), 1))
+            add(PojoOfJsonArray("name B", c1, dateToString(c1), 1))
+            add(PojoOfJsonArray("name C", c2, dateToString(c2), 1))
+            add(PojoOfJsonArray("name D", c2, dateToString(c2), 1))
+            add(PojoOfJsonArray("name E", c2, dateToString(c2), 1))
+            add(PojoOfJsonArray("name F", c1, dateToString(c1), 1))
+            add(PojoOfJsonArray("name G", c3, dateToString(c3), 1))
+            add(PojoOfJsonArray("name H", c4, dateToString(c4), 1))
+            add(PojoOfJsonArray("name I", c4, dateToString(c4), 1))
+            add(PojoOfJsonArray("name J", c5, dateToString(c5), 1))
+            add(PojoOfJsonArray("name K", c5, dateToString(c5), 1))
+            add(PojoOfJsonArray("name L", c5, dateToString(c5), 1))
         }
 
         for (i in list) { // sort into list 1 or 2
@@ -58,17 +58,15 @@ class ViewModel: ViewModel() {
     private fun createConsolidatedList1() {
         // TODO: sectioning works only sometimes - changes when I re-run the app
         val today = Calendar.getInstance()
-        val actualMonth = today.get(Calendar.MONTH)+1
-        today.set(today.get(Calendar.YEAR), actualMonth, today.get(Calendar.DAY_OF_MONTH)) // note that 'today' was instantiated as "2022 11 6" since months go from 0 to 11. this fixes that
-        val todayString = dateToString(today)
+        val todayInt = dateToInt(today)
 
         val tomorrow = Calendar.getInstance()
-        tomorrow.set(Calendar.MONTH, tomorrow.get(Calendar.MONTH)+1)
         tomorrow.add(Calendar.DATE, 1) // adds a day to today's date
+        val tomorrowInt = dateToInt(tomorrow)
 
         val nextWeek = Calendar.getInstance()
-        nextWeek.set(Calendar.MONTH, nextWeek.get(Calendar.MONTH)+1)
         nextWeek.add(Calendar.DATE, 7) // adds 7 days to today's date
+        val nextWeekInt = dateToInt(nextWeek)
 
         list1.sortBy { it.date }
 
@@ -85,7 +83,8 @@ class ViewModel: ViewModel() {
         } // creates a map of 'date' to a 'list of PojoOfJsonArray' - eg: key '20160605', value is a list containing 'name 2', 'name 3'
         consolidatedList1 = arrayListOf()
         for (date: Calendar in groupedMap1.keys) {
-            if (date < today) {
+            val dateInt = dateToInt(date)
+            if (dateInt < todayInt) {
                 if (!overdueHeader) {
                     consolidatedList1.add(DateItem("Overdue")) // adds a header if one doesn't already exist
                     overdueHeader = true
@@ -95,7 +94,7 @@ class ViewModel: ViewModel() {
                     consolidatedList1.add(GeneralItem(it.name, it.dateString)) // creates a GeneralItem class for each 'name' in above list
                 }
 
-            } else if (date == today) {
+            } else if (dateInt == todayInt) {
                 if (!todayHeader) {
                     consolidatedList1.add(DateItem("Due Today")) // adds a header if one doesn't already exist
                     todayHeader = true
@@ -105,7 +104,7 @@ class ViewModel: ViewModel() {
                     consolidatedList1.add(GeneralItem(it.name, it.dateString)) // creates a GeneralItem class for each 'name' in above list
                 }
 
-            } else if (date == tomorrow) {
+            } else if (dateInt == tomorrowInt) {
                 if (!tomorrowHeader) {
                     consolidatedList1.add(DateItem("Due Tomorrow")) // adds a header if one doesn't already exist
                     tomorrowHeader = true
@@ -115,7 +114,7 @@ class ViewModel: ViewModel() {
                     consolidatedList1.add(GeneralItem(it.name, it.dateString)) // creates a GeneralItem class for each 'name' in above list
                 }
 
-            } else if (date < nextWeek) {
+            } else if (dateInt < nextWeekInt) {
                 if (!nextWeekHeader) {
                     consolidatedList1.add(DateItem("Due Next Week")) // adds a header if one doesn't already exist
                     nextWeekHeader = true
@@ -193,8 +192,34 @@ class ViewModel: ViewModel() {
 
     private fun dateToString(date: Calendar): String {
         val year = date.get(Calendar.YEAR)
-        val month = date.get(Calendar.MONTH)
+        val month = date.get(Calendar.MONTH)+1
         val day = date.get(Calendar.DAY_OF_MONTH)
         return "$year $month $day"
     }
+
+    private fun dateToInt(date: Calendar): Int {
+        val year = date.get(Calendar.YEAR)
+        val month = date.get(Calendar.MONTH)+1
+        val day = date.get(Calendar.DAY_OF_MONTH)
+
+        var monthString = month.toString()
+        var dayString = day.toString()
+
+        // ensure proper MM format
+        if (month < 10) {
+            monthString = "0$month" // eg convert "8" to "08"
+        }
+
+        // ensure proper DD format
+        if (day < 10) {
+            dayString = "0$day"
+        }
+
+        // convert to YYYYMMDD format
+        val dateString = "$year$monthString$dayString"
+        val dateInt = dateString.toInt() // return integer so it can be sorted
+
+        return(dateInt)
+    }
+
 }
